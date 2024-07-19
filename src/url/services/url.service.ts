@@ -12,9 +12,13 @@ export class UrlService {
     private readonly urlRepository: Repository<Url>,
   ) {}
 
-  async create(createUrlDto: CreateUrlDto): Promise<Url> {
+  async createShortUrl(createUrlDto: CreateUrlDto): Promise<Url> {
     const shortUrl = uuidv4().slice(0, 6);
     const url = this.urlRepository.create({ ...createUrlDto, shortUrl });
     return this.urlRepository.save(url);
+  }
+
+  async findByShortUrl(shortUrl: string): Promise<Url> {
+    return this.urlRepository.findOne({ where: { shortUrl } });
   }
 }

@@ -1,0 +1,94 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>URL Shortener</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .title{
+      text-align: center;
+      font: 900 49px asap, arial;
+      color: #0186da;
+      letter-spacing: -1px;
+      text-shadow: 0 2px 2px #ddd;
+      word-wrap: break-word;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      text-align: center;
+    }
+    input, button {
+      font-size: 16px;
+      border: none;
+      padding: 15px;
+
+    }
+    input{
+      outline: none;
+      width: 70%;
+    }
+    button {
+      cursor: pointer;
+    }
+    .url_input{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #bbb;
+      width: 88%;
+      margin: 20px auto;
+    }
+    .result {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .copy-btn {
+      margin-left: 10px;
+      padding: 5px 10px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="title">Short URL</h1>
+  <div class="container">
+    <h1>Paste the URL to be shortened</h1>
+    <form action="/url" method="post">
+      <div class="url_input">
+        <input type="text" name="originalUrl" placeholder="Enter URL here" required />
+        <button type="submit">Shorten URL</button>
+      </div>
+    </form>
+
+    <% if (shortUrl) { %>
+      <div class="result">
+        <p>Shortened URL: <a href="<%= shortUrl %>" target="_blank"><%= shortUrl %></a></p>
+        <button class="copy-btn" onclick="copyToClipboard('<%= shortUrl %>')">Copy</button>
+      </div>
+    <% } %>
+  </div>
+
+  <script>
+    function copyToClipboard(url) {
+      navigator.clipboard.writeText(url).then(() => {
+        alert('URL copied to clipboard');
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+    }
+  </script>
+</body>
+</html>
