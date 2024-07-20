@@ -20,7 +20,7 @@ export class UrlController {
     private configService: ConfigService,
   ) {}
 
-  @Post()
+  @Post('shorten')
   @Render('index')
   async createShortUrl(@Body() createUrlDto: CreateUrlDto) {
     const url = await this.urlService.createShortUrl(createUrlDto);
