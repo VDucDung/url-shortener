@@ -5,8 +5,47 @@
   <title>URL Shortener</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    header {
+        background-color: #0186da;
+        color: white;
+        padding: 15px 0;
+        text-align: center;
+    }
+
+    nav {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    nav a {
+        color: white;
+        padding: 14px 20px;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    nav a:hover {
+        background-color: #2c87c5;
+        border-radius: 25px;
+    }
+
+    footer {
+        background-color: #333;
+        padding: 10px 0;
+        text-align: center;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+    }
+    .copyright{
+      color: white;
+
     }
     .title{
       text-align: center;
@@ -15,6 +54,7 @@
       letter-spacing: -1px;
       text-shadow: 0 2px 2px #ddd;
       word-wrap: break-word;
+      margin-top: 70px;
     }
     .container {
       max-width: 600px;
@@ -78,6 +118,13 @@
   </style>
 </head>
 <body>
+  <header>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/url/list-url">List URL</a>
+        <a href="/login">Login</a>
+    </nav>
+</header>
   <h1 class="title">Short URL</h1>
   <div class="container">
     <h1>Paste the URL to be shortened</h1>
@@ -99,6 +146,9 @@
       <p>URL shortener allows to create a shortened link making it easy to share</p>
     </div>
   </div>
+  <footer>
+    <p class="copyright">&copy; 2024 My Website</p>
+</footer>
 
   <script>
     function copyToClipboard(url) {
