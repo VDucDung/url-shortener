@@ -8,7 +8,7 @@ import {
 
 import { ActiveUser } from '../common/decorators/active-user.decorator';
 import { User } from './entities/user.entity';
-import { UsersService } from './user.service';
+import { UsersService } from './users.service';
 
 @ApiTags('users')
 @Controller('users')
