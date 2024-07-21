@@ -3,9 +3,13 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 import { ExpressAdapter } from '@nestjs/platform-express';
+import { setupSwagger } from './swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  setupSwagger(app);
+
   app.useGlobalPipes(new ValidationPipe());
 
   const expressApp = app.getHttpAdapter();

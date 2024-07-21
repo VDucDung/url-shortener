@@ -12,6 +12,7 @@ import {
 import { UrlService } from '../services/url.service';
 import { CreateUrlDto } from '../dto/create-url.dto';
 import { Response } from 'express';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('url')
 export class UrlController {
@@ -19,7 +20,18 @@ export class UrlController {
     private readonly urlService: UrlService,
     private configService: ConfigService,
   ) {}
-
+  @Get('/list-url')
+  @Public()
+  @Render('list-url')
+  getListUrl() {
+    // Giả sử bạn có một mảng các URL trong cơ sở dữ liệu
+    const urls = [
+      { originalUrl: 'http://example.com/1', shortUrl: 'http://short.url/1' },
+      { originalUrl: 'http://example.com/2', shortUrl: 'http://short.url/2' },
+    ];
+    return { urls };
+  }
+  @Public()
   @Post('shorten')
   @Render('index')
   async createShortUrl(@Body() createUrlDto: CreateUrlDto) {
@@ -28,7 +40,7 @@ export class UrlController {
       shortUrl: `${this.configService.get('URL_NAME')}/url/${url.shortUrl}`,
     };
   }
-
+  @Public()
   @Get(':shortUrl')
   async findByShortUrl(
     @Param('shortUrl') shortUrl: string,
