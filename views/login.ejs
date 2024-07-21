@@ -94,15 +94,15 @@
       <nav>
         <a href="/">Home</a>
         <a href="/url/list-url">List URL</a>
-        <a href="/login">Login</a>
+        <a href="/auth/sign-in">Login</a>
       </nav>
     </header>
 
     <div class="container">
       <h1>Login</h1>
-      <form action="/login" method="post">
+      <form action="/atuh/sign-in" method="post">
         <div class="form-group">
-          <input type="text" name="username" placeholder="Username" required />
+          <input type="text" name="username" placeholder="Email" required />
         </div>
         <div class="form-group">
           <input
@@ -117,7 +117,9 @@
       <div>
         <p class="description">
           Do not have an user?
-          <span><a href="/register" class="btn_register">Register now</a></span>
+          <span
+            ><a href="/auth/sign-up" class="btn_register">Register now</a></span
+          >
         </p>
       </div>
     </div>
