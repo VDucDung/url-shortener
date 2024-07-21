@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Login</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background-color: #0186da;
+        color: white;
+        padding: 15px 0;
+        text-align: center;
+      }
+
+      nav {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+      }
+
+      nav a {
+        color: white;
+        padding: 14px 20px;
+        text-decoration: none;
+        text-align: center;
+      }
+
+      nav a:hover {
+        background-color: #2c87c5;
+        border-radius: 25px;
+      }
+
+      footer {
+        background-color: #333;
+        padding: 10px 0;
+        text-align: center;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+      }
+      .copyright {
+        color: white;
+      }
+      .container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+        margin-top: 50px;
+      }
+
+      input {
+        padding: 18px 14px;
+        outline: none;
+        width: 92%;
+        margin: 0 auto;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+      }
+      .form-group {
+        margin-bottom: 15px;
+        width: 100%;
+      }
+      .btn_login {
+        padding: 15px 30px;
+        margin: 20px auto;
+        border-radius: 5px;
+        width: 100%;
+        border: none;
+        cursor: pointer;
+        background-color: #2c87c5;
+        color: white;
+        font-size: 18px;
+      }
+      .description {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #777;
+        text-align: left;
+      }
+      .btn_register {
+        color: #2c87c5;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/url/list-url">List URL</a>
+        <a href="/login">Login</a>
+      </nav>
+    </header>
+
+    <div class="container">
+      <h1>Login</h1>
+      <form action="/login" method="post">
+        <div class="form-group">
+          <input type="text" name="username" placeholder="Username" required />
+        </div>
+        <div class="form-group">
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+        </div>
+        <button type="submit" class="btn_login">Sign In</button>
+      </form>
+      <div>
+        <p class="description">
+          Do not have an user?
+          <span><a href="/register" class="btn_register">Register now</a></span>
+        </p>
+      </div>
+    </div>
+    <footer>
+      <p class="copyright">&copy; 2024 My Website</p>
+    </footer>
+  </body>
+</html>
