@@ -22,6 +22,7 @@ import { Public } from '../common/decorators/public.decorator';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -46,8 +47,9 @@ export class AuthController {
 
   @Public()
   @Post('sign-up')
-  signUp(@Body() signUpDto: SignUpDto): Promise<void> {
-    return this.authService.signUp(signUpDto);
+  async signUp(@Body() signUpDto: SignUpDto): Promise<User> {
+    const user = await this.authService.signUp(signUpDto);
+    return { ...user };
   }
 
   @Public()

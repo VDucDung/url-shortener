@@ -31,14 +31,17 @@ export class AuthService {
     private readonly redisService: RedisService,
   ) {}
 
-  async signUp(signUpDto: SignUpDto): Promise<void> {
-    const { email, password } = signUpDto;
+  async signUp(signUpDto: SignUpDto): Promise<User> {
+    const { username, email, password } = signUpDto;
 
     try {
       const user = new User();
+      user.username = username;
       user.email = email;
       user.password = await this.bcryptService.hash(password);
       await this.userRepository.save(user);
+      delete user.password;
+      return { ...user };
     } catch (error) {
       if (error.code === MysqlErrorCode.UniqueViolation) {
         throw new ConflictException(`User [${email}] already exist`);
@@ -67,7 +70,9 @@ export class AuthService {
       throw new BadRequestException('Invalid password');
     }
 
-    return await this.generateAccessToken(user);
+    delete user.password;
+    const accessToken = await this.generateAccessToken(user);
+    return { ...user, ...accessToken };
   }
 
   async signOut(userId: string): Promise<void> {
