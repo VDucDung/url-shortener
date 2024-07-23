@@ -91,14 +91,19 @@
   </head>
   <body>
     <header>
-      <nav>
+      <nav id="navLinks">
         <a href="/">Home</a>
         <a href="/url/list-url">List URL</a>
-        <a href="/atuh/sign-in">Login</a>
+        <a href="/auth/sign-in" id="loginLink">Login</a>
+        <span
+          id="usernameDisplay"
+          style="color: white; padding: 14px 20px; display: none"
+        ></span>
+        <a href="#" id="logoutLink" style="display: none">Logout</a>
       </nav>
     </header>
 
-    <div class="container">
+    <div class="container" id="registerContainer">
       <h1>Register</h1>
       <form id="registerForm">
         <div class="form-group">
@@ -132,46 +137,68 @@
         </p>
       </div>
     </div>
+
     <footer>
       <p class="copyright">&copy; 2024 My Website</p>
     </footer>
+
     <script>
-      document
-        .getElementById('registerForm')
-        .addEventListener('submit', async (event) => {
-          event.preventDefault();
+      document.addEventListener('DOMContentLoaded', function () {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const usernameDisplay = document.getElementById('usernameDisplay');
+        const loginLink = document.getElementById('loginLink');
+        const logoutLink = document.getElementById('logoutLink');
 
-          const form = event.target;
-          const formData = new FormData(form);
+        if (user && user.username) {
+          usernameDisplay.textContent = `Welcome, ${user.username}`;
+          usernameDisplay.style.display = 'inline';
+          loginLink.style.display = 'none';
+          logoutLink.style.display = 'inline';
+        }
 
-          const data = {
-            username: formData.get('username'),
-            email: formData.get('email'),
-            password: formData.get('password'),
-            passwordConfirm: formData.get('passwordConfirm'),
-          };
-
-          try {
-            const response = await fetch('/auth/sign-up', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(data),
-            });
-
-            if (response.status === 201) {
-              alert('User registered successfully!');
-              window.location.href = '/';
-            } else {
-              const errorData = await response.json();
-              alert(`Error: ${errorData.message}`);
-            }
-          } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
-          }
+        logoutLink.addEventListener('click', function () {
+          localStorage.removeItem('user');
+          window.location.reload();
         });
+
+        document
+          .getElementById('registerForm')
+          .addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+
+            const data = {
+              username: formData.get('username'),
+              email: formData.get('email'),
+              password: formData.get('password'),
+              passwordConfirm: formData.get('passwordConfirm'),
+            };
+
+            try {
+              const response = await fetch('/auth/sign-up', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+              });
+              if (response.status === 201) {
+                const responseData = await response.json();
+                localStorage.setItem('user', JSON.stringify(responseData));
+                window.location.href = '/';
+                alert('Register successful!');
+              } else {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.message}`);
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              alert('An error occurred. Please try again.');
+            }
+          });
+      });
     </script>
   </body>
 </html>

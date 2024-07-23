@@ -69,10 +69,10 @@
 </head>
 <body>
   <header>
-    <nav>
+    <nav id="nav">
       <a href="/">Home</a>
       <a href="/url/list-url">List URL</a>
-      <a href="/auth/sign-in">Login</a>
+      <a id="authLink" href="/auth/sign-in">Login</a>
     </nav>
   </header>
 
@@ -95,5 +95,44 @@
   <footer>
     <p class="copyright">&copy; 2024 My Website</p>
   </footer>
+  
+  <script>
+    function updateNav() {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const authLink = document.getElementById('authLink');
+      const nav = document.getElementById('nav');
+
+      if (user && user.username) {
+        authLink.innerText = `Hello, ${user.username}`;
+        authLink.href = "#";
+
+        let logoutLink = document.getElementById('logoutLink');
+        if (!logoutLink) {
+          logoutLink = document.createElement('a');
+          logoutLink.id = 'logoutLink';
+          logoutLink.href = "#";
+          logoutLink.innerText = "Logout";
+          logoutLink.onclick = handleLogout;
+          nav.appendChild(logoutLink);
+        }
+      } else {
+        authLink.innerText = "Login";
+        authLink.href = "/auth/sign-in";
+        authLink.onclick = null;
+
+        const logoutLink = document.getElementById('logoutLink');
+        if (logoutLink) {
+          nav.removeChild(logoutLink);
+        }
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('user');
+      window.location.reload();
+    }
+
+    document.addEventListener('DOMContentLoaded', updateNav);
+  </script>
 </body>
 </html>
