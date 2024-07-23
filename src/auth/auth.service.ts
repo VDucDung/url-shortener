@@ -32,9 +32,15 @@ export class AuthService {
   ) {}
 
   async signUp(signUpDto: SignUpDto): Promise<User> {
-    const { username, email, password } = signUpDto;
+    const { username, email, password, passwordConfirm } = signUpDto;
 
     try {
+      if (password !== passwordConfirm) {
+        throw new BadRequestException('Passwords do not match');
+      }
+      if (await this.userRepository.findOne({ where: { email } })) {
+        throw new ConflictException(`User [${email}] already exist`);
+      }
       const user = new User();
       user.username = username;
       user.email = email;
