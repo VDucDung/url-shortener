@@ -4,4 +4,6 @@ export class CreateUrlDto {
   @IsUrl()
   @IsNotEmpty()
   originalUrl: string;
+
+  userId: string;
 }

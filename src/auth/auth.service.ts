@@ -91,7 +91,6 @@ export class AuthService {
     const tokenId = randomUUID();
 
     await this.redisService.insert(`user-${user.id}`, tokenId);
-
     const accessToken = await this.jwtService.signAsync(
       {
         id: user.id,
@@ -103,7 +102,6 @@ export class AuthService {
         expiresIn: this.jwtConfiguration.accessTokenTtl,
       },
     );
-
     return { accessToken };
   }
 }
