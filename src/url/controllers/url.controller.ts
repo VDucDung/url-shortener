@@ -8,11 +8,14 @@ import {
   Param,
   Res,
   HttpStatus,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UrlService } from '../services/url.service';
 import { CreateUrlDto } from '../dto/create-url.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { Public } from 'src/common/decorators/public.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('url')
 export class UrlController {
@@ -20,22 +23,40 @@ export class UrlController {
     private readonly urlService: UrlService,
     private configService: ConfigService,
   ) {}
+
   @Get('/list-url')
-  @Public()
-  @Render('list-url')
-  getListUrl() {
-    // Giả sử bạn có một mảng các URL trong cơ sở dữ liệu
-    const urls = [
-      { originalUrl: 'http://example.com/1', shortUrl: 'http://short.url/1' },
-      { originalUrl: 'http://example.com/2', shortUrl: 'http://short.url/2' },
-    ];
-    return { urls };
+  @UseGuards(JwtAuthGuard)
+  async getListUrl(
+    @Req() req: Request & { user: { id: string } },
+    @Res() response: Response,
+  ) {
+    const userId = req.user?.id;
+    if (!req.user) return response.redirect('/auth/sign-in');
+
+    const results = await this.urlService.getListUrl(userId);
+    const urls = results.map((result) => ({
+      shortUrl: `${this.configService.get('URL_NAME')}/url/${result.shortUrl}`,
+      originalUrl: result.originalUrl,
+    }));
+
+    return response.json({ urls });
   }
+
+  @Public()
+  @Get('/list')
+  @Render('list-url')
+  async listUrl() {
+    return {};
+  }
+
   @Public()
   @Post('shorten')
-  @Render('index')
+  // @Render('index')
   async createShortUrl(@Body() createUrlDto: CreateUrlDto) {
-    const url = await this.urlService.createShortUrl(createUrlDto);
+    const url = await this.urlService.createShortUrl(
+      createUrlDto,
+      createUrlDto?.userId,
+    );
     return {
       shortUrl: `${this.configService.get('URL_NAME')}/url/${url.shortUrl}`,
     };

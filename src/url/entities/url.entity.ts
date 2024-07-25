@@ -10,4 +10,7 @@ export class Url {
 
   @Column({ unique: true })
   shortUrl: string;
+
+  @Column({ nullable: true })
+  userId: string;
 }
