@@ -1,138 +1,112 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <title>List URL</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background-color: #0186da;
-      color: white;
-      padding: 15px 0;
-      text-align: center;
-    }
-
-    nav {
-      display: flex;
-      justify-content: center;
-      margin-top: 10px;
-    }
-
-    nav a {
-      color: white;
-      padding: 14px 20px;
-      text-decoration: none;
-      text-align: center;
-    }
-
-    nav a:hover {
-      background-color: #2c87c5;
-      border-radius: 25px;
-    }
-
-    footer {
-      background-color: #333;
-      padding: 10px 0;
-      text-align: center;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
-    }
-    .copyright {
-      color: white;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      text-align: center;
-      margin-top: 50px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <nav id="nav">
-      <a href="/">Home</a>
-      <a href="/url/list-url">List URL</a>
-      <a id="authLink" href="/auth/sign-in">Login</a>
-    </nav>
-  </header>
-
-  <div class="container">
-    <h1>List of URLs</h1>
-    <table>
-      <tr>
-        <th>Original URL</th>
-        <th>Shortened URL</th>
-      </tr>
-      <% urls.forEach(url => { %>
-        <tr>
-          <td><a href="<%= url.originalUrl %>" target="_blank"><%= url.originalUrl %></a></td>
-          <td><a href="<%= url.shortUrl %>" target="_blank"><%= url.shortUrl %></a></td>
-        </tr>
-      <% }); %>
-    </table>
-  </div>
-
-  <footer>
-    <p class="copyright">&copy; 2024 My Website</p>
-  </footer>
-  
-  <script>
-    function updateNav() {
-      const user = JSON.parse(localStorage.getItem('user'));
-      const authLink = document.getElementById('authLink');
-      const nav = document.getElementById('nav');
-
-      if (user && user.username) {
-        authLink.innerText = `Hello, ${user.username}`;
-        authLink.href = "#";
-
-        let logoutLink = document.getElementById('logoutLink');
-        if (!logoutLink) {
-          logoutLink = document.createElement('a');
-          logoutLink.id = 'logoutLink';
-          logoutLink.href = "#";
-          logoutLink.innerText = "Logout";
-          logoutLink.onclick = handleLogout;
-          nav.appendChild(logoutLink);
-        }
-      } else {
-        authLink.innerText = "Login";
-        authLink.href = "/auth/sign-in";
-        authLink.onclick = null;
-
-        const logoutLink = document.getElementById('logoutLink');
-        if (logoutLink) {
-          nav.removeChild(logoutLink);
-        }
+  <head>
+    <title>List URL</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
       }
-    }
 
-    function handleLogout() {
-      localStorage.removeItem('user');
-      window.location.reload();
-    }
+      footer {
+        background-color: #333;
+        padding: 10px 0;
+        text-align: center;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+      }
 
-    document.addEventListener('DOMContentLoaded', updateNav);
-  </script>
-</body>
+      .copyright {
+        color: white;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+        margin-top: 50px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+
+  <body>
+    <%- include('partials/header') %>
+
+    <div id="urlContainer" class="container">
+      <h1>List of URLs</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Original URL</th>
+            <th>Shortened URL</th>
+          </tr>
+        </thead>
+        <tbody id="urlTableBody"></tbody>
+      </table>
+    </div>
+
+    <footer>
+      <p class="copyright">&copy; 2024 My Website</p>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const urlTableBody = document.getElementById('urlTableBody');
+        const urls = JSON.parse(localStorage.getItem('urls'));
+
+        function getCookie(name) {
+          const cookieArr = document.cookie.split(';');
+          for (let i = 0; i < cookieArr.length; i++) {
+            const cookiePair = cookieArr[i].split('=');
+            if (name === cookiePair[0].trim()) {
+              return decodeURIComponent(cookiePair[1]);
+            }
+          }
+          return null;
+        }
+
+        const userCookie = getCookie('user');
+        if (!userCookie) {
+          localStorage.removeItem('urls');
+          window.location.href = '/auth/sign-in';
+          return;
+        }
+
+        if (urls && Array.isArray(urls) && urls.length > 0) {
+          urls.forEach((url) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td><a href="${url.originalUrl}" target="_blank">${url.originalUrl}</a></td>
+              <td><a href="${url.shortUrl}" target="_blank">${url.shortUrl}</a></td>
+            `;
+            urlTableBody.appendChild(row);
+          });
+        } else {
+          const row = document.createElement('tr');
+          row.innerHTML = '<td colspan="2">No URLs available.</td>';
+          urlTableBody.appendChild(row);
+        }
+      });
+    </script>
+  </body>
 </html>

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Header</title>
+    <style>
+      header {
+        background-color: #0186da;
+        color: white;
+        padding: 15px 0;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10px;
+      }
+
+      nav a {
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        font-size: 16px;
+        transition:
+          background-color 0.3s,
+          color 0.3s;
+      }
+
+      nav a:hover {
+        background-color: #2c87c5;
+        border-radius: 25px;
+        color: white;
+      }
+
+      #logoutLink {
+        margin-left: 15px;
+        background-color: #ff6b6b;
+        color: white;
+        border-radius: 5px;
+        padding: 8px 15px;
+        text-decoration: none;
+      }
+
+      #logoutLink:hover {
+        background-color: #ff4757;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <nav id="nav">
+        <a href="/">Home</a>
+        <a id="listUrlLink" href="#">List URL</a>
+        <a id="authLink" href="/auth/sign-in">Login</a>
+      </nav>
+    </header>
+    <script>
+      function getCookie(name) {
+        const nameEQ = name + '=';
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) === ' ') c = c.substring(1);
+          if (c.indexOf(nameEQ) === 0)
+            return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      }
+
+      function updateNav() {
+        const userCookie = getCookie('user');
+        const user = userCookie ? JSON.parse(userCookie) : null;
+        const authLink = document.getElementById('authLink');
+        const listUrlLink = document.getElementById('listUrlLink');
+        const nav = document.getElementById('nav');
+
+        if (user && user.username) {
+          authLink.innerText = `Hello, ${user.username}`;
+          authLink.href = '#';
+
+          let logoutLink = document.getElementById('logoutLink');
+          if (!logoutLink) {
+            logoutLink = document.createElement('a');
+            logoutLink.id = 'logoutLink';
+            logoutLink.href = '#';
+            logoutLink.innerText = 'Logout';
+            logoutLink.onclick = handleLogout;
+            nav.appendChild(logoutLink);
+          }
+
+          if (listUrlLink) {
+            listUrlLink.addEventListener('click', async (event) => {
+              event.preventDefault();
+
+              if (!user || !user.accessToken) {
+                alert('You need to login before viewing the list of URLs.');
+                window.location.href = '/auth/sign-in';
+                return;
+              }
+
+              try {
+                const response = await fetch('/url/list-url', {
+                  method: 'GET',
+                  headers: {
+                    Authorization: `Bearer ${user.accessToken}`,
+                    'Content-Type': 'application/json',
+                  },
+                });
+
+                if (response.ok) {
+                  const data = await response.json();
+                  localStorage.setItem('urls', JSON.stringify(data.urls));
+                  window.location.href = '/url/list';
+                } else if (response.status === 401) {
+                  window.location.href = '/auth/sign-in';
+                } else {
+                  console.error('Failed to fetch URLs:', response.statusText);
+                  alert('Failed to fetch URLs. Please try again later.');
+                }
+              } catch (error) {
+                console.error('An error occurred:', error);
+                alert(
+                  'An error occurred while fetching URLs. Please try again later.',
+                );
+              }
+            });
+          }
+        } else {
+          authLink.innerText = 'Login';
+          authLink.href = '/auth/sign-in';
+          authLink.onclick = null;
+
+          if (listUrlLink) {
+            listUrlLink.addEventListener('click', (event) => {
+              event.preventDefault();
+              alert('You need to login before viewing the list of URLs.');
+              window.location.href = '/auth/sign-in';
+            });
+          }
+        }
+      }
+
+      function handleLogout() {
+        document.cookie =
+          'user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+        localStorage.removeItem('urls');
+        window.location.reload();
+      }
+
+      document.addEventListener('DOMContentLoaded', updateNav);
+    </script>
+  </body>
+</html>
