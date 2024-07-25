@@ -4,9 +4,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { setupSwagger } from './swagger';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(cookieParser());
 
   setupSwagger(app);
 
