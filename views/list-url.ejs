@@ -59,6 +59,7 @@
           <tr>
             <th>Original URL</th>
             <th>Shortened URL</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody id="urlTableBody"></tbody>
@@ -70,20 +71,63 @@
     </footer>
 
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const urlTableBody = document.getElementById('urlTableBody');
-        const urls = JSON.parse(localStorage.getItem('urls'));
-
-        function getCookie(name) {
-          const cookieArr = document.cookie.split(';');
-          for (let i = 0; i < cookieArr.length; i++) {
-            const cookiePair = cookieArr[i].split('=');
-            if (name === cookiePair[0].trim()) {
-              return decodeURIComponent(cookiePair[1]);
-            }
+      function getCookie(name) {
+        const cookieArr = document.cookie.split(';');
+        for (let i = 0; i < cookieArr.length; i++) {
+          const cookiePair = cookieArr[i].split('=');
+          if (name === cookiePair[0].trim()) {
+            return decodeURIComponent(cookiePair[1]);
           }
-          return null;
         }
+        return null;
+      }
+
+      function deleteUrl(urlId) {
+        const user = JSON.parse(getCookie('user'));
+        fetch(`/urls/${urlId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data) {
+              const urls = JSON.parse(localStorage.getItem('urls'));
+              const updatedUrls = urls.filter((url) => url.urlId !== urlId);
+              localStorage.setItem('urls', JSON.stringify(updatedUrls));
+              alert('URL deleted successfully');
+              renderUrls(updatedUrls);
+            } else {
+              alert('Error deleting URL');
+            }
+          })
+          .catch((error) => console.error('Error:', error));
+      }
+
+      function renderUrls(urls) {
+        const urlTableBody = document.getElementById('urlTableBody');
+        urlTableBody.innerHTML = '';
+        if (urls && Array.isArray(urls) && urls.length > 0) {
+          urls.forEach((url) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td><a href="${url.originalUrl}" target="_blank">${url.originalUrl}</a></td>
+              <td><a href="${url.shortUrl}" target="_blank">${url.shortUrl}</a></td>
+              <td><button onclick="deleteUrl(${url.urlId})">Xóa</button></td>
+            `;
+            urlTableBody.appendChild(row);
+          });
+        } else {
+          const row = document.createElement('tr');
+          row.innerHTML = '<td colspan="3">No URLs available.</td>';
+          urlTableBody.appendChild(row);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const urls = JSON.parse(localStorage.getItem('urls'));
 
         const userCookie = getCookie('user');
         if (!userCookie) {
@@ -92,20 +136,7 @@
           return;
         }
 
-        if (urls && Array.isArray(urls) && urls.length > 0) {
-          urls.forEach((url) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td><a href="${url.originalUrl}" target="_blank">${url.originalUrl}</a></td>
-              <td><a href="${url.shortUrl}" target="_blank">${url.shortUrl}</a></td>
-            `;
-            urlTableBody.appendChild(row);
-          });
-        } else {
-          const row = document.createElement('tr');
-          row.innerHTML = '<td colspan="2">No URLs available.</td>';
-          urlTableBody.appendChild(row);
-        }
+        renderUrls(urls);
       });
     </script>
   </body>

@@ -26,6 +26,15 @@ export class UrlService {
     });
     return this.urlRepository.save(url);
   }
+  async findUrlById(id: string): Promise<Url> {
+    return this.urlRepository.findOne({ where: { id: parseInt(id, 10) } });
+  }
+  async deleteUrl(urlId: string): Promise<Url> {
+    const url = await this.findUrlById(urlId);
+    if (!url) throw new Error('Url not found');
+    await this.urlRepository.delete(urlId);
+    return url;
+  }
 
   async findByShortUrl(shortUrl: string): Promise<Url> {
     return this.urlRepository.findOne({ where: { shortUrl } });

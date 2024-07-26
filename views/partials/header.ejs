@@ -104,7 +104,7 @@
               }
 
               try {
-                const response = await fetch('/url/list-url', {
+                const response = await fetch('/urls/list-url', {
                   method: 'GET',
                   headers: {
                     Authorization: `Bearer ${user.accessToken}`,
@@ -115,7 +115,7 @@
                 if (response.ok) {
                   const data = await response.json();
                   localStorage.setItem('urls', JSON.stringify(data.urls));
-                  window.location.href = '/url/list';
+                  window.location.href = '/urls/list';
                 } else if (response.status === 401) {
                   window.location.href = '/auth/sign-in';
                 } else {
