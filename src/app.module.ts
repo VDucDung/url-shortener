@@ -22,11 +22,13 @@ import swaggerConfig from './common/config/swagger.config';
       load: [appConfig, jwtConfig, redisConfig, swaggerConfig],
     }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      type: process.env.DATABASE_TYPE as 'postgres',
       host: process.env.DATABASE_HOST,
-      port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
+      port: process.env.DATABASE_PORT
+        ? parseInt(process.env.DATABASE_PORT, 10)
+        : 5432,
       username: process.env.DATABASE_USERNAME,
-      password: process.env.DATABASE_PASSWORD,
+      password: process.env.POSTGRES_PASSWORD,
       database: process.env.DATABASE_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,

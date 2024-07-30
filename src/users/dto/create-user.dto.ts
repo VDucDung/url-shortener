@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 
 @Entity({ name: 'users' })
-export class User {
+export class CreateUserDto {
   @ApiProperty({
     description: 'ID of the user',
     example: '89c018cc-8a77-4dbd-94e1-dbaa710a2a9c',
