@@ -9,14 +9,14 @@ import {
   Res,
   HttpStatus,
   UseGuards,
-  Req,
   Delete,
 } from '@nestjs/common';
-import { UrlService } from '../services/url.service';
-import { CreateUrlDto } from '../dto/create-url.dto';
-import { Request, Response } from 'express';
+import { UrlService } from './url.service';
+import { CreateUrlDto } from './dto/create-url.dto';
+import { Response } from 'express';
 import { Public } from 'src/common/decorators/public.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 
 @Controller('urls')
 export class UrlController {
@@ -28,12 +28,9 @@ export class UrlController {
   @Get('/list-url')
   @UseGuards(JwtAuthGuard)
   async getListUrl(
-    @Req() req: Request & { user: { id: string } },
+    @ActiveUser('id') userId: string,
     @Res() response: Response,
   ) {
-    const userId = req.user?.id;
-    // if (!req.user) return response.redirect('/auth/sign-in');
-
     const results = await this.urlService.getListUrl(userId);
     const urls = results.map((result) => ({
       urlId: result.id,

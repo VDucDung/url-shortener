@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { UrlService } from './services/url.service';
-import { UrlController } from './controllers/url.controller';
+import { UrlService } from './url.service';
+import { UrlController } from './url.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Url } from './entities/url.entity';
 import { AuthModule } from 'src/auth/auth.module';
