@@ -17,6 +17,8 @@ import { Response } from 'express';
 import { Public } from 'src/common/decorators/public.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
 
 @Controller('urls')
 export class UrlController {
@@ -80,5 +82,13 @@ export class UrlController {
         .status(HttpStatus.NOT_FOUND)
         .json({ message: 'URL not found' });
     }
+  }
+
+  @Get('/admin/urls')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async getAllUrls(@Res() response: Response) {
+    const urls = await this.urlService.getAllUrls();
+    return response.json({ urls });
   }
 }

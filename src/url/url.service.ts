@@ -45,4 +45,7 @@ export class UrlService {
       where: { userId },
     });
   }
+  async getAllUrls(): Promise<Url[]> {
+    return this.urlRepository.find();
+  }
 }
