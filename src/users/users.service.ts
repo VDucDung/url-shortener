@@ -41,18 +41,27 @@ export class UsersService {
     return this.userRepository.findOneBy({ id });
   }
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.getMe(id);
+    const user = await this.findOne(id);
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
     Object.assign(user, updateUserDto);
 
-    return this.userRepository.save(user);
+    await this.userRepository.save(user);
+
+    delete user.password;
+    return user;
   }
 
   async remove(id: string): Promise<User> {
     const user = await this.findOne(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     await this.userRepository.delete(id);
     return user;
   }
