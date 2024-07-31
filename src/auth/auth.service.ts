@@ -91,10 +91,12 @@ export class AuthService {
     const tokenId = randomUUID();
 
     await this.redisService.insert(`user-${user.id}`, tokenId);
+    console.log(user.roles);
     const accessToken = await this.jwtService.signAsync(
       {
         id: user.id,
         email: user.email,
+        roles: user.roles,
         tokenId,
       } as ActiveUserData,
       {

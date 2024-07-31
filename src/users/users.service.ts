@@ -22,7 +22,7 @@ export class UsersService {
     if (!user) {
       throw new BadRequestException('User not found');
     }
-
+    delete user.password;
     return user;
   }
 
