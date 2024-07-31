@@ -62,11 +62,26 @@ export class UsersController {
   @ApiBearerAuth()
   @Roles('admin')
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
     return this.usersService.update(id, updateUserDto);
+  }
+
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiOkResponse({
+    description: 'The user has been successfully updated.',
+    type: User,
+  })
+  @ApiBearerAuth()
+  @Roles('user')
+  @Put('me')
+  async updateMe(
+    @ActiveUser('id') userId: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return this.usersService.update(userId, updateUserDto);
   }
 
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
